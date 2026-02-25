@@ -1,0 +1,92 @@
+version: '3.8'
+
+# x-api-env (top-level) is just a named map; Compose ignores x-* keys as services. &api-env defines an anchor.
+# all env variables must be prepared by CDK stack and be present in the host system
+x-api-env: &api-env
+  # Environment Variables
+  NODE_ENV: ${NODE_ENV}
+  PORT: ${PORT}
+  DEBUG_PORT: ${DEBUG_PORT}
+  SITE_ORIGIN: ${SITE_ORIGIN}
+  # Database  
+  DB_HOST: ${DB_HOST}
+  DB_PORT: ${DB_PORT}
+  DB_NAME: ${DB_NAME}
+  DB_USERNAME: ${DB_USERNAME}
+  DB_PASSWORD: ${DB_PASSWORD}
+  TYPEORM_LOGGING: ${TYPEORM_LOGGING}
+  # JWT
+  JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+  JWT_REFRESH_SECRET_KEY: ${JWT_REFRESH_SECRET_KEY}
+  ACCESS_TOKEN_TTL: ${ACCESS_TOKEN_TTL}
+  REFRESH_TOKEN_TTL: ${REFRESH_TOKEN_TTL}
+  # Password Hashing
+  BCRYPT_SALT_ROUNDS: ${BCRYPT_SALT_ROUNDS}
+  REDIS_PORT: ${REDIS_PORT}
+  # OpenVidu livekit
+  LIVEKIT_URL: ${LIVEKIT_URL}
+  LIVEKIT_SECRET: ${LIVEKIT_SECRET}
+  LIVEKIT_API_KEY: ${LIVEKIT_API_KEY}
+  # AWS S3 (for recordings)
+  AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+  AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+  AWS_REGION: ${AWS_REGION}
+  S3_BUCKET_NAME: ${S3_BUCKET_NAME}
+
+services:
+  
+  api-build:
+    restart: "no"
+    build:  
+      context: docker/api
+      dockerfile: ./Dockerfile
+    user: "node"
+    tty: true
+    volumes:
+      - ./:/app
+    environment: *api-env
+    command: >
+      bash -c "npm ci
+      && rm -rf dist
+      && npm run build"
+
+  api-run:
+    restart: unless-stopped
+    depends_on:
+      - db
+      - redis
+    build:  
+      context: docker/api
+      dockerfile: ./Dockerfile
+    user: "node"
+    tty: true
+    volumes:
+      - ./:/app
+    ports:
+      - ${PORT}:3000
+      - ${DEBUG_PORT}:9229
+    environment: *api-env
+    command: ["npm", "run", "start:prod"]
+
+
+  db:
+    restart: unless-stopped
+    build:
+      dockerfile: docker/postgres/Dockerfile
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - ${DB_PORT}:5432
+    volumes:
+      - /mnt/db-data/data:/var/lib/postgresql/data
+      - ./docker/postgres/init-scripts:/docker-entrypoint-initdb.d
+
+  redis:
+    restart: unless-stopped
+    image: redis:alpine
+    ports:
+      - ${REDIS_PORT}:6379
+    volumes:
+      - ./docker/redis/data:/data

@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  api:
+    depends_on:
+      - db
+    build:  
+      context: docker/api
+      dockerfile: ./Dockerfile
+    user: "node"
+    tty: true
+    volumes:
+      - ./:/app
+    ports:
+      - ${PORT}:3000
+      - ${DEBUG_PORT}:9229
+    command: >
+      bash -c "npm ci
+      && rm -rf dist
+      && npm run start:debug"  
+  db:
+    restart: unless-stopped
+    build:
+      dockerfile: docker/postgres/Dockerfile
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - ${DB_PORT}:5432
+    volumes:
+      - ./docker/postgres/data:/var/lib/postgresql/data
+      - ./docker/postgres/init-scripts:/docker-entrypoint-initdb.d
+
+  adminer:
+    image: adminer
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+
+  redis:
+    image: redis:alpine
+    ports:
+      - ${REDIS_PORT}:6379
+    volumes:
+      - ./docker/redis/data:/data

@@ -1,0 +1,102 @@
+### ========== Sign In (Get Auth Tokens) ==========
+
+# @name signin
+curl -X POST https://tutor-platform-dev.for-test.click/api/auth/signin \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "admin@mail.com",
+    "password": "tutorte...n"
+  }'
+
+@access_token = {{signin.response.body.accessToken}}
+@refresh_token = {{signin.response.body.refreshToken}}
+@userId = 1a965497-a49a-4782-9750-30ad5821680d
+
+
+### ========== CREATE MEETING ========== 
+
+# @name createMeeting
+
+POST https://tutor-platform-dev.for-test.click/api/meetings
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+{
+    "title": "Math Tutoring Session"
+}
+###
+
+@meetingId = {{createMeeting.response.body.id}}
+
+### ========== GET ROOM TOKEN ========== 
+
+# @name getRoomToken
+GET http://localhost:3000/api/meetings/{{meetingId}}/room-token
+Authorization: Bearer {{access_token}}
+
+###
+@roomToken = {{getRoomToken.response.body.token}}
+
+
+### ========== IMITATE WEBHOOK ========== 
+
+# @name imitateWebhook
+POST http://localhost:3000/api/openvidu/webhook
+Content-Type: application/json
+LiveKit-Webhook-Id: webhook-test-123
+LiveKit-Webhook-Timestamp: 2024-02-06T12:38:00Z
+LiveKit-Webhook-Signature: t=2024-02-06T12:38:00Z,v1=test-signature
+
+{
+    "event": "room_started",
+    "room": {
+        "name": "Math Tutoring Session",
+        "sid": "RM_test123"
+    },
+    "participant": null,
+    "timestamp": "2024-02-06T12:38:00Z",
+    "id": "webhook-event-123"
+}
+
+### ========== IMITATE WEBHOOK - ROOM ENDED ========== 
+
+# @name webhookRoomEnded
+POST http://localhost:3000/api/openvidu/webhook
+Content-Type: application/json
+LiveKit-Webhook-Id: webhook-test-456
+LiveKit-Webhook-Timestamp: 2024-02-06T13:00:00Z
+LiveKit-Webhook-Signature: t=2024-02-06T13:00:00Z,v1=test-signature-2
+
+{
+    "event": "room_finished",
+    "room": {
+        "name": "Math Tutoring Session",
+        "sid": "RM_test123"
+    },
+    "participant": null,
+    "timestamp": "2024-02-06T13:00:00Z",
+    "id": "webhook-event-456"
+}
+
+### ========== IMITATE WEBHOOK - PARTICIPANT JOINED ========== 
+
+# @name webhookParticipantJoined
+POST http://localhost:3000/api/openvidu/webhook
+Content-Type: application/json
+LiveKit-Webhook-Id: webhook-test-789
+LiveKit-Webhook-Timestamp: 2024-02-06T12:45:00Z
+LiveKit-Webhook-Signature: t=2024-02-06T12:45:00Z,v1=test-signature-3
+
+{
+    "event": "participant_joined",
+    "room": {
+        "name": "Math Tutoring Session",
+        "sid": "RM_test123"
+    },
+    "participant": {
+        "identity": "user123",
+        "sid": "PA_user123"
+    },
+    "timestamp": "2024-02-06T12:45:00Z",
+    "id": "webhook-event-789"
+}

@@ -1,0 +1,83 @@
+
+### Sign In (Get Tokens)
+
+# @name signin
+curl -X POST http://localhost:3000/api/auth/signin \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "admin@mail.com",
+    "password": "tutorte...n"
+  }'
+
+@access_token = {{signin.response.body.accessToken}}
+@refresh_token = {{signin.response.body.refreshToken}}
+
+### Create User
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "email": "admin@example.com",
+  "password": "password123",
+  "role": "admin"
+}
+
+
+### Create Regular User
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "password123",
+  "role": "user"
+}
+
+###
+
+### Get All Users (Admin)
+GET http://localhost:3000/api/users
+Authorization: Bearer {{access_token}}
+
+
+### Get User by ID
+@user_id=4683add1-7b99-438c-b2b5-9d7746a6b39a
+GET http://localhost:3000/api/users/{{user_id}}
+Authorization: Bearer {{access_token}}
+
+
+### Refresh Access Token
+# @name refresh
+
+GET http://localhost:3000/api/auth/refresh
+Authorization: Bearer {{refresh_token}}
+
+@access_token = {{refresh.response.body.accessToken}}
+
+### Test Invalid Sign In
+POST http://localhost:3000/api/auth/signin
+Content-Type: application/json
+
+{
+  "email": "admin@example.com",
+  "password": "wrongpassword"
+}
+
+
+### Test Invalid Refresh Token
+POST http://localhost:3000/api/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "invalid_refresh_token"
+}
+
+
+### Test Protected Endpoint Without Token
+GET http://localhost:3000/api/users
+
+
+### Test Protected Endpoint With Invalid Token
+GET http://localhost:3000/api/users
+Authorization: Bearer invalid_token
+

@@ -1,0 +1,79 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "description": "see AGENTS.md for agents instructions",
+  "main": "index.js",
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {
+    "build": "nest build",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "start": "nest start",
+    "start:dev": "nest start --watch",
+    "start:debug": "nest start --debug --watch",
+    "start:prod": "node dist/main",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:cov": "jest --coverage",
+    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "typeorm": "node -r ts-node/register ./node_modules/typeorm/cli.js -d src/db/ormconfig.ts",
+    "migration:create": "node -r ts-node/register ./node_modules/typeorm/cli.js migration:create src/db/migrations/$npm_config_name",
+    "migration:generate": "npm run typeorm migration:generate src/db/migrations/$npm_config_name",
+    "migration:run": "npm run typeorm migration:run",
+    "migration:revert": "npm run typeorm migration:revert"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ForeverYoung1208/tutor-api.git"
+  },
+  "keywords": [],
+  "author": "Ihor S",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/ForeverYoung1208/tutor-api/issues"
+  },
+  "homepage": "https://github.com/ForeverYoung1208/tutor-api#readme",
+  "dependencies": {
+    "@nestjs/common": "^11.1.13",
+    "@nestjs/config": "^4.0.3",
+    "@nestjs/core": "^11.1.13",
+    "@nestjs/jwt": "^11.0.2",
+    "@nestjs/passport": "^11.0.5",
+    "@nestjs/platform-express": "^11.1.13",
+    "@nestjs/swagger": "^11.2.6",
+    "@nestjs/typeorm": "^11.0.0",
+    "@types/bcryptjs": "^2.4.6",
+    "bcrypt": "^6.0.0",
+    "bcryptjs": "^3.0.3",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.3",
+    "livekit-server-sdk": "^2.15.0",
+    "passport": "^0.7.0",
+    "passport-jwt": "^4.0.1",
+    "passport-local": "^1.0.0",
+    "pg": "^8.18.0",
+    "typeorm-transactional": "^0.5.0",
+    "typescript-eslint": "^8.54.0"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "^11.0.16",
+    "@nestjs/testing": "^11.1.13",
+    "@types/bcrypt": "^6.0.0",
+    "@types/node": "^25.2.0",
+    "@types/passport-jwt": "^4.0.1",
+    "@types/passport-local": "^1.0.38",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.5",
+    "nodemon": "^3.1.11",
+    "prettier": "^3.8.1",
+    "ts-loader": "^9.5.4",
+    "ts-node": "^10.9.2",
+    "typeorm": "^0.3.28",
+    "typescript": "^5.9.3"
+  }
+}
