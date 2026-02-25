@@ -9,7 +9,7 @@ export async function getOpenViduMeetToken(roomName: string, participantName: st
       },
       body: JSON.stringify({
         username: 'admin',
-        password: 'tutortest'
+        password: 'videomeettest'
       })
     });
 

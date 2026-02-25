@@ -41,6 +41,6 @@ services:
   redis:
     image: redis:alpine
     ports:
-      - ${REDIS_PORT}:6379
+      - ${REDIS_PORT}:6380
     volumes:
       - ./docker/redis/data:/data

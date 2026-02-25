@@ -56,13 +56,12 @@ video-meet/
 ### Backend (video-meet-api)
 - **Framework:** NestJS 10.x
 - **Language:** TypeScript 5.x
-- **Database:** MongoDB 6.x (with Mongoose 8.x)
-- **Caching/Messaging:** Redis (ioredis 5.x)
-- **Video Infrastructure:** LiveKit/OpenVidu 3.x
-- **Cloud Storage:** AWS S3, Azure Blob Storage, Google Cloud Storage
+- **Database:** PostgreSQL 17.5 (with TypeORM)
+- **Caching/Messaging:** Redis (default port 6380 to avoid OpenVidu conflict)
+- **Video Infrastructure:** LiveKit/OpenVidu 3.x (isolated 3rd party service)
+- **Cloud Storage:** AWS S3 (for recordings)
 - **Authentication:** JWT (Passport + @nestjs/jwt)
 - **Validation:** class-validator, class-transformer
-- **Scheduling:** node-cron
 - **Infrastructure:** AWS CDK 2.x
 
 ### Frontend (video-meet-ui)
@@ -487,24 +486,35 @@ room.on('participantConnected', (participant) => {
 
 ### 3. Database Operations
 
-**Using Mongoose:**
+**Using TypeORM with PostgreSQL:**
 ```typescript
-// Define schema
-const RoomSchema = new Schema({
-  roomId: { type: String, required: true, unique: true },
-  name: { type: String, required: true },
-  status: { type: String, enum: ['active', 'ended', 'expired'] },
-  createdAt: { type: Date, default: Date.now },
-});
+// Define entity
+@Entity('rooms')
+export class Room {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-// Use in repository
+  @Column()
+  name: string;
+
+  @Column({ type: 'enum', enum: ['active', 'ended'] })
+  status: string;
+
+  @CreateDateColumn()
+  createdAt: Date;
+}
+
+// Use in service
 @Injectable()
-export class RoomRepository {
-  constructor(@InjectModel('Room') private roomModel: Model<Room>) {}
+export class RoomService {
+  constructor(
+    @InjectRepository(Room)
+    private roomRepository: Repository<Room>,
+  ) {}
 
   async create(data: CreateRoomDto): Promise<Room> {
-    const room = new this.roomModel(data);
-    return room.save();
+    const room = this.roomRepository.create(data);
+    return this.roomRepository.save(room);
   }
 }
 ```
@@ -520,17 +530,7 @@ await this.redisService.set('room:123', JSON.stringify(roomData), 'EX', 3600);
 const data = await this.redisService.get('room:123');
 ```
 
-**Pub/Sub:**
-```typescript
-// Publish
-await this.redisService.publishEvent('room:123:events', { type: 'participant_joined' });
-
-// Subscribe
-await this.redisService.subscribe('room:123:events');
-this.redisService.on('message', (channel, message) => {
-  // Handle message
-});
-```
+**Note:** Redis runs on port 6380 to avoid conflict with OpenVidu's Redis (port 6379)
 
 ---
 
@@ -636,7 +636,7 @@ All detailed documentation is in `.agents/summary/`:
 
 ### Task 4: Add Database Entity
 
-1. Define Mongoose schema
+1. Define TypeORM entity
 2. Create repository
 3. Add to module providers
 4. Implement CRUD operations
@@ -667,15 +667,16 @@ All detailed documentation is in `.agents/summary/`:
    - Do not add tests unless explicitly requested
    - Tests will be added after POC stage
 
-4. **Multi-Cloud Storage**
-   - Support for AWS S3, Azure Blob, GCS
-   - Provider selected via configuration
-   - Use BlobStorageService abstraction
+4. **OpenVidu is Isolated 3rd Party Service**
+   - OpenVidu runs separately with its own MongoDB and Redis
+   - Main API uses PostgreSQL (not OpenVidu's MongoDB)
+   - Main API uses Redis on port 6380 (not OpenVidu's Redis on 6379)
+   - Only integration point is LiveKit SDK
 
-5. **Distributed Locking Required**
-   - Recording operations MUST use locks
-   - Participant name reservation MUST use locks
-   - Use MutexService for all critical sections
+5. **Redis Port Configuration**
+   - Main API Redis: port 6380
+   - OpenVidu Redis: port 6379
+   - Ports separated to avoid conflicts
 
 6. **Cursor-Based Pagination**
    - Use for all list endpoints
@@ -707,9 +708,41 @@ All detailed documentation is in `.agents/summary/`:
 
 - **NestJS Docs:** https://docs.nestjs.com/
 - **LiveKit Docs:** https://docs.livekit.io/
-- **MongoDB Docs:** https://www.mongodb.com/docs/
+- **TypeORM Docs:** https://typeorm.io/
+- **PostgreSQL Docs:** https://www.postgresql.org/docs/
 - **Redis Docs:** https://redis.io/docs/
 - **AWS CDK Docs:** https://docs.aws.amazon.com/cdk/
+
+---
+
+## Development Setup
+
+### Running Locally
+
+1. **Start OpenVidu Server:**
+```bash
+cd openvidu-local-deployment/community
+./configure_lan_private_ip_linux.sh
+docker compose up -d
+```
+
+2. **Start API:**
+```bash
+cd video-meet-api
+docker compose up -d
+```
+
+### Environment Configuration
+
+**Main API (.env):**
+- Database: PostgreSQL on port 5432
+- Redis: Port 6380 (to avoid OpenVidu conflict)
+- LiveKit: wss://192.168.0.17:7443 (local OpenVidu)
+
+**OpenVidu:**
+- Runs on port 7443 (HTTPS)
+- Has its own MongoDB (port 27017) and Redis (port 6379)
+- Completely isolated from main API
 
 ---
 

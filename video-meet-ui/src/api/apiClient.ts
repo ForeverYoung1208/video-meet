@@ -1,7 +1,7 @@
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios';
 
 // API base URL - should be moved to environment variables
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://tutor-platform-dev.for-test.click';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 // Create axios instance
 const apiClient = axios.create({

@@ -36,9 +36,9 @@ async function bootstrap(): Promise<void> {
   if ([ENV_LOCAL, ENV_STAGE, ENV_DEV].includes(currentEnv)) {
     const apiVersion = process.env.npm_package_version;
     const swaggerConfig = new DocumentBuilder()
-      .setTitle('Tutor Platform API')
+      .setTitle('Video Meet API')
       .setDescription(
-        `POC API for tutoring platform with video calls and recordings - environment '${currentEnv}' version ${apiVersion}`,
+        `API for video conferencing platform with video calls and recordings - environment '${currentEnv}' version ${apiVersion}`,
       )
       .setVersion(apiVersion || '1.0')
       .addBearerAuth()

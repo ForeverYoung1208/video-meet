@@ -4,7 +4,7 @@ import { ApiProperty } from '@nestjs/swagger';
 export class CreateMeetingDto {
   @ApiProperty({
     description: 'Meeting title',
-    example: 'Math Tutoring Session',
+    example: 'Team Meeting',
   })
   @IsString()
   @IsNotEmpty()

@@ -1,5 +1,5 @@
 {
-  "name": "api",
+  "name": "video-meet-api",
   "version": "1.0.0",
   "description": "see AGENTS.md for agents instructions",
   "main": "index.js",
@@ -27,16 +27,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ForeverYoung1208/tutor-api.git"
+    "url": "git+https://github.com/ForeverYoung1208/video-meet.git"
   },
   "keywords": [],
   "author": "Ihor S",
   "license": "ISC",
   "type": "commonjs",
   "bugs": {
-    "url": "https://github.com/ForeverYoung1208/tutor-api/issues"
+    "url": "https://github.com/ForeverYoung1208/video-meet/issues"
   },
-  "homepage": "https://github.com/ForeverYoung1208/tutor-api#readme",
+  "homepage": "https://github.com/ForeverYoung1208/video-meet#readme",
   "dependencies": {
     "@nestjs/common": "^11.1.13",
     "@nestjs/config": "^4.0.3",

@@ -1,7 +1,7 @@
 import { IAppStackConfig } from './bin/infra';
 
 // define project name (any) - will be used as part of naming for some resources like docker image, database, etc.
-const projectShortName = 'tutor-platform';
+const projectShortName = 'video-meet';
 
 // define AWS region
 const region = 'eu-central-1';

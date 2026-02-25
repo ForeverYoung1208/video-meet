@@ -1,7 +1,7 @@
-# Tutor Platform API - Progress Tracking
+# Video Meet API - Progress Tracking
 
 ## Project Overview
-Building a NestJS backend API POC for a tutoring platform with:
+Building a NestJS backend API for a video conferencing platform with:
 - JWT authentication (access/refresh tokens)
 - Multi-user meetings using OpenVidu
 - Recording management

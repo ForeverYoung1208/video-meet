@@ -1,4 +1,6 @@
-# Tutor platform POC api
+# Video Meet API
+
+Backend API for video conferencing platform with LiveKit/OpenVidu integration.
 
 see AGENTS.md for agents instructions
 see https://docs.livekit.io/reference/client-sdk-js/  for livekit Node.js client documentation
