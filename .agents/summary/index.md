@@ -20,6 +20,7 @@ All documentation files are located in `.agents/summary/` directory:
 ├── index.md              # This file - navigation and metadata
 ├── codebase_info.md      # Project overview and structure
 ├── architecture.md       # System design and patterns
+├── coding_patterns.md    # Detailed coding patterns and conventions
 ├── components.md         # Component descriptions
 ├── interfaces.md         # APIs and integrations
 ├── data_models.md        # Database schemas and models
@@ -82,11 +83,43 @@ All documentation files are located in `.agents/summary/` directory:
 
 **Metadata Tags:** `#architecture` `#design-patterns` `#deployment` `#scalability` `#security`
 
-**Related Files:** components.md, workflows.md, data_models.md
+**Related Files:** coding_patterns.md, components.md, workflows.md, data_models.md
 
 ---
 
-### 3. components.md
+### 3. coding_patterns.md
+
+**Purpose:** Detailed coding patterns, conventions, and implementation examples
+
+**When to Use:**
+- Implementing new features or modules
+- Understanding service/repository patterns
+- Learning validation and error handling approaches
+- Working with distributed systems (locking, scheduling)
+- Integrating external services (LiveKit, storage providers)
+- Following project-specific conventions
+- Step-by-step development workflows
+
+**Key Topics:**
+- Module organization structure
+- Service layer pattern with examples
+- Repository pattern with cursor pagination
+- DTO validation patterns
+- Exception handling conventions
+- Distributed locking for critical sections
+- Scheduled tasks implementation
+- Multi-cloud storage abstraction
+- Development workflows (adding features, LiveKit integration, database operations)
+- Common implementation tasks
+- Testing patterns (future)
+
+**Metadata Tags:** `#coding-patterns` `#conventions` `#examples` `#workflows` `#best-practices`
+
+**Related Files:** architecture.md, components.md, workflows.md
+
+---
+
+### 4. components.md
 
 **Purpose:** Detailed descriptions of all major components and their responsibilities
 
