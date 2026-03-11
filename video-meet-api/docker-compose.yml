@@ -19,7 +19,7 @@ services:
       && rm -rf dist
       && npm run start:debug"  
   db:
-    restart: unless-stopped
+    # restart: unless-stopped
     build:
       dockerfile: docker/postgres/Dockerfile
     environment:
@@ -34,7 +34,7 @@ services:
 
   adminer:
     image: adminer
-    restart: unless-stopped
+    # restart: unless-stopped
     ports:
       - "8080:8080"
 
